@@ -1,0 +1,115 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center" id="blog-title">
+    <h1 class="display-4">Receita Blog</h1>
+    <p>O seu blog de receitas</p>
+</div>
+
+<div class="alert alert-info show" id="connection-status"></div>
+
+<div class="blog-list card-columns" id="blog-list">
+</div>
+
+<div class="center">
+    <button class="btn btn-dark" onclick="pageEvents.loadMoreBlogPosts();">ver mais</button>
+    <br /><br />
+</div>
+
+<div id="blog-item-container"></div>
+
+<div >
+    <div >
+        <div class="form-group ">
+            <form id="formPostRecipe" method="POST">
+                <hr/>
+                <h4>Nova Receita</h4>
+
+                <label for="title">Título</label>
+                <input type="text" id="title" required name="title" class="form-control" />
+
+                <label for="description">Descrição</label>
+                <input type="text" id="description" required name="description" class="form-control" />
+
+                <label for="ingredients">Ingredientes</label>
+                <textarea rows="4" cols="50" id="ingredients" required name="ingredients" class="form-control"></textarea>
+
+                <label for="preparationMode">Modo de preparo</label>
+                <textarea rows="4" cols="50" id="preparationMode" required name="preparationMode" class="form-control"></textarea>
+
+                <label for="imageRecipe"> Adicione uma foto a sua receita</label>
+                <input type="file" id="imageRecipe" name="imageRecipe" accept="image/*" onchange="PreviewImage();" class="form-control">
+                <img id="uploadPreview" style="width: 300px; height: 180px;" />
+
+                <br/>
+                <br/>
+                <input type="button" class="btn btn-dark" value="Enviar" onclick="pageEvents.addRecipe();" />
+            </form>
+        </div>
+    </div>
+</div>
+
+<script id="blog-card" type="text/template">
+    <div class="card">
+        <div class="card-body">
+            <div style="display:none"> {{PostId}}    </div>        
+            <h5 class="card-title"> {{Title}}</h5>
+            <img src="{{Image}}" alt="" />
+            <p class="card-text">{{ShortDescription}}</p>
+            <p class="card-text"> <strong>Ingredientes:</strong> {{Ingredients}}</p>
+            <p class="card-text"><strong>Modo de preparo:</strong> {{PreparationMode}}</p>
+            <button onclick="pageEvents.loadBlogPost('{{Link}}');" class="btn btn-dark">ir</button>
+        </div>
+    </div>
+</script>
+<script id="blog-item" type="text/template">
+    <div id="{{Link}}" class="blog-item">
+        {{Content}}
+    </div>
+    <div>
+        <a href="#blog-title" class="btn btn-dark blog-item-close">Voltar</a>
+    </div>
+    <br />
+    <div>
+        <button class="btn btn-dark download-start" onclick="pageEvents.setBackgroundFetch('{{Link}}');">Salvar no cache</button>
+    </div>
+    <br />
+</script>
+
+<script id="blog-content-not-found" type="text/template">
+    <h1>
+        Ups, esta receita não está no cache!
+    </h1>
+    <div>
+        Você deseja salvar essa receita para ler depois e ser informado quando dispnível?
+    </div>
+    <br />
+    <button class="btn btn-dark download-start" onclick="pageEvents.setBackgroundFetch('{{Link}}');">Sim!</button>
+    <br />
+    <br />
+    <div class="download-response"></div>
+    <div id="status-download" style="display:none;">
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+        </div>
+        <div class="text-success">
+            <p>feito!</p>
+            <button class="btn btn-success" onclick="pageEvents.loadBlogPost('{{Link}}');">ler!</button>
+        </div>
+    </div>
+
+</script>
+
+<script type="text/javascript">
+
+    function PreviewImage() {
+        var oFReader = new FileReader();
+        oFReader.readAsDataURL(document.getElementById("imageRecipe").files[0]);
+
+        oFReader.onload = function (oFREvent) {
+            document.getElementById("uploadPreview").src = oFREvent.target.result;
+        };
+    };
+
+</script>
